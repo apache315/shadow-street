@@ -1,6 +1,6 @@
 const I18N = {
-  it: { fastest: 'Più veloce', shadiest: 'Più ombra', recommended: 'CONSIGLIATO', min: 'min' },
-  en: { fastest: 'Fastest', shadiest: 'Shadiest', recommended: 'RECOMMENDED', min: 'min' },
+  it: { fastest: 'Più veloce', shadiest: 'Più ombra', recommended: 'CONSIGLIATO', min: 'min', shade: 'ombra' },
+  en: { fastest: 'Fastest', shadiest: 'Shadiest', recommended: 'RECOMMENDED', min: 'min', shade: 'shade' },
 }
 
 export default function RouteCard({ type, info, active, onClick, lang = 'it' }) {
@@ -32,7 +32,7 @@ export default function RouteCard({ type, info, active, onClick, lang = 'it' }) 
       <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
         <div>⏱ {Math.round(info.total_duration_s / 60)} {t.min}</div>
         <div>→ {Math.round(info.total_distance_m)}m</div>
-        <div>🌿 {info.shade_pct}% ombra</div>
+        <div>🌿 {info.shade_pct}% {t.shade}</div>
       </div>
     </div>
   )

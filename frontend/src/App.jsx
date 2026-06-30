@@ -76,7 +76,7 @@ export default function App() {
             position: 'absolute', top: 70, left: '50%', transform: 'translateX(-50%)',
             background: '#fff', borderRadius: 20, padding: '6px 16px',
             boxShadow: 'var(--shadow-sm)', fontSize: 13, zIndex: 10,
-          }}>Calcolo percorsi…</div>
+          }}>{lang === 'it' ? 'Calcolo percorsi…' : 'Calculating routes…'}</div>
         )}
 
         {!loading && error && (

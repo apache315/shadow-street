@@ -1,5 +1,10 @@
 import { useState } from 'react'
 
+const I18N = {
+  it: { timeControl: 'CONTROLLO ORARIO', now: 'Adesso', custom: 'Personalizza' },
+  en: { timeControl: 'TIME CONTROL', now: 'Now', custom: 'Custom' },
+}
+
 function buildTicks() {
   const ticks = []
   for (let h = 7; h <= 21; h++) {
@@ -12,6 +17,7 @@ const TICKS = buildTicks()
 
 export default function TimeControl({ selectedTime, onChange, lang = 'it' }) {
   const [custom, setCustom] = useState(false)
+  const t = I18N[lang]
 
   function applyOffset(offsetHours) {
     const d = new Date()
@@ -33,18 +39,18 @@ export default function TimeControl({ selectedTime, onChange, lang = 'it' }) {
   return (
     <div style={{ marginTop: 12 }}>
       <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600, letterSpacing: '0.05em' }}>
-        TIME CONTROL
+        {t.timeControl}
       </div>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         <button style={pillStyle(!selectedTime && !custom)}
           onClick={() => { setCustom(false); onChange(null) }}>
-          Adesso
+          {t.now}
         </button>
         <button style={pillStyle(false)} onClick={() => applyOffset(1)}>+1h</button>
         <button style={pillStyle(false)} onClick={() => applyOffset(2)}>+2h</button>
         <button style={pillStyle(custom)}
           onClick={() => setCustom(c => !c)}>
-          Personalizza
+          {t.custom}
         </button>
       </div>
       {custom && (

@@ -2,12 +2,18 @@ import { useState, useRef } from 'react'
 import RouteCard from './RouteCard.jsx'
 import TimeControl from './TimeControl.jsx'
 
+const I18N = {
+  it: { calculating: 'Calcolo…', routesFound: '2 percorsi trovati ↑', searchPrompt: 'Cerca una destinazione', nightMessage: 'Di notte tutti i percorsi sono in ombra — mostriamo il più breve.' },
+  en: { calculating: 'Calculating…', routesFound: '2 routes found ↑', searchPrompt: 'Search for a destination', nightMessage: 'At night all routes are shaded — showing the shortest one.' },
+}
+
 export default function BottomSheet({
   fastest, shadiest, night, activeRoute, onSelectRoute, selectedTime, onTimeChange,
   lang = 'it', loading,
 }) {
   const [sheetState, setSheetState] = useState('collapsed') // collapsed|mid|expanded
   const startY = useRef(null)
+  const t = I18N[lang]
 
   const heights = { collapsed: 80, mid: '50vh', expanded: '90vh' }
 
@@ -43,14 +49,14 @@ export default function BottomSheet({
       {/* Hint when collapsed */}
       {sheetState === 'collapsed' && (
         <div style={{ textAlign: 'center', fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
-          {loading ? 'Calcolo…' : hasRoutes ? '2 percorsi trovati ↑' : 'Cerca una destinazione'}
+          {loading ? t.calculating : hasRoutes ? t.routesFound : t.searchPrompt}
         </div>
       )}
 
       {/* Night message */}
       {sheetState !== 'collapsed' && night && (
         <div style={{ fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center', padding: '8px 0' }}>
-          Di notte tutti i percorsi sono in ombra — mostriamo il più breve.
+          {t.nightMessage}
         </div>
       )}
 

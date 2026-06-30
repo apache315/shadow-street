@@ -1,6 +1,11 @@
 import RouteCard from './RouteCard.jsx'
 import TimeControl from './TimeControl.jsx'
 
+const I18N = {
+  it: { title: 'Pisa — percorsi ombrosi', popularPlaces: 'LUOGHI POPOLARI', calculatingRoutes: 'Calcolo percorsi…', nightMessage: 'Di notte tutti i percorsi sono in ombra — mostriamo il più breve.' },
+  en: { title: 'Pisa — shaded routes', popularPlaces: 'POPULAR PLACES', calculatingRoutes: 'Calculating routes…', nightMessage: 'At night all routes are shaded — showing the shortest one.' },
+}
+
 const PISA_LANDMARKS = [
   'Torre di Pisa', 'Piazza dei Miracoli', 'Università di Pisa',
   'Stazione Pisa Centrale', 'Piazza dei Cavalieri',
@@ -10,6 +15,7 @@ export default function Sidebar({
   fastest, shadiest, night, activeRoute, onSelectRoute,
   selectedTime, onTimeChange, lang = 'it', loading, onLandmarkClick,
 }) {
+  const t = I18N[lang]
   return (
     <div style={{
       position: 'absolute', top: 0, left: 0, bottom: 0,
@@ -20,7 +26,7 @@ export default function Sidebar({
       {/* Header */}
       <div style={{ padding: '20px 16px 12px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 4 }}>🌿 Shadow Street</div>
-        <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Pisa — percorsi ombrosi</div>
+        <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t.title}</div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
@@ -28,7 +34,7 @@ export default function Sidebar({
         {!fastest && !loading && (
           <div>
             <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)',
-                          letterSpacing: '0.05em', marginBottom: 8 }}>LUOGHI POPOLARI</div>
+                          letterSpacing: '0.05em', marginBottom: 8 }}>{t.popularPlaces}</div>
             {PISA_LANDMARKS.map((name, i) => (
               <div key={i}
                 onClick={() => onLandmarkClick?.(name)}
@@ -43,13 +49,13 @@ export default function Sidebar({
 
         {loading && (
           <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: 24 }}>
-            Calcolo percorsi…
+            {t.calculatingRoutes}
           </div>
         )}
 
         {night && fastest && (
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', padding: '8px 0' }}>
-            Di notte tutti i percorsi sono in ombra — mostriamo il più breve.
+            {t.nightMessage}
           </div>
         )}
 

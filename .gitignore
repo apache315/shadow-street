@@ -1,1 +1,9 @@
 d:/Shadow Street/.superpowers/
+.claude/
+node_modules/
+frontend/dist/
+*.pyc
+__pycache__/
+.pytest_cache/
+.env
+

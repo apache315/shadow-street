@@ -9,6 +9,7 @@ import geopandas as gpd
 from shapely.geometry import LineString, Point, MultiPolygon, Polygon
 from shapely.ops import transform, unary_union
 from shapely.affinity import translate
+from shapely.prepared import prep
 from pyproj import Transformer
 from pysolar.solar import get_altitude, get_azimuth
 
@@ -137,6 +138,8 @@ def compute_shadow_weights(
         except Exception:
             continue
     shadow_union = unary_union(shadow_polys) if shadow_polys else None
+    if shadow_union is not None:
+        shadow_union = prep(shadow_union)
 
     # Build tree canopy union (fixed circles — sun direction agnostic for MVP)
     tree_polys = []
@@ -147,6 +150,8 @@ def compute_shadow_weights(
         except Exception:
             continue
     tree_union = unary_union(tree_polys) if tree_polys else None
+    if tree_union is not None:
+        tree_union = prep(tree_union)
 
     weights: dict = {}
     for u, v, data in G.edges(data=True):

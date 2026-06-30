@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: shadow-street-backend
+    runtime: docker
+    repo: https://github.com/apache315/shadow-street
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: TZ
+        value: Europe/Rome
+
+  - type: web
+    name: shadow-street-frontend
+    runtime: docker
+    repo: https://github.com/apache315/shadow-street
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: free
+    envVars:
+      - key: BACKEND_SCHEME
+        value: https
+      - key: BACKEND_HOST
+        fromService:
+          type: web
+          name: shadow-street-backend
+          property: host

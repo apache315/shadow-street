@@ -74,3 +74,12 @@ def test_project_building_shadow_returns_larger_polygon():
 
 def test_twilight_constant_value():
     assert TWILIGHT_ALTITUDE == 10.0
+
+
+def test_covered_edge_full_shade_during_twilight(tiny_graph, empty_buildings, empty_trees):
+    # Low sun angle → twilight, but covered edge must still be 1.0
+    dt = datetime(2024, 1, 15, 7, 30, 0, tzinfo=timezone.utc)  # early morning, low sun (5.50°)
+    covered = {(1, 2)}
+    weights, night = compute_shadow_weights(dt, tiny_graph, empty_buildings, empty_trees, covered)
+    assert night is False
+    assert weights[_edge_key(1, 2)] == 1.0

@@ -22,7 +22,6 @@ TREE_CANOPY_RADIUS_M = 4.0
 TREE_SHADE_FRACTION = 0.6
 
 _to_utm = Transformer.from_crs(WGS84_CRS, UTM_CRS, always_xy=True)
-_to_wgs = Transformer.from_crs(UTM_CRS, WGS84_CRS, always_xy=True)
 
 
 def _edge_key(u: int, v: int) -> str:
@@ -86,7 +85,7 @@ def compute_shadow_weights(
     buildings: gpd.GeoDataFrame,
     trees: gpd.GeoDataFrame,
     covered_edges: set,
-) -> tuple:
+) -> tuple[dict[str, float], bool]:
     """Compute per-edge shade fractions for a given datetime.
 
     Parameters
@@ -124,6 +123,8 @@ def compute_shadow_weights(
     # Twilight: sun too low for reliable shadow geometry — high shade
     if sun_alt < TWILIGHT_ALTITUDE:
         weights = {_edge_key(u, v): 0.8 for u, v, _ in G.edges(data=True)}
+        for u, v in covered_edges:
+            weights[_edge_key(u, v)] = 1.0
         return weights, False
 
     # Build shadow union from buildings

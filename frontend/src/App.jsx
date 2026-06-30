@@ -69,6 +69,7 @@ export default function App() {
         night={night}
         activeRoute={activeRoute}
         onSelectRoute={setActiveRoute}
+        selectedTime={selectedTime}
         onTimeChange={setSelectedTime}
         lang={lang}
         loading={loading}

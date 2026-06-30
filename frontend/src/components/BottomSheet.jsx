@@ -3,7 +3,7 @@ import RouteCard from './RouteCard.jsx'
 import TimeControl from './TimeControl.jsx'
 
 export default function BottomSheet({
-  fastest, shadiest, night, activeRoute, onSelectRoute, onTimeChange,
+  fastest, shadiest, night, activeRoute, onSelectRoute, selectedTime, onTimeChange,
   lang = 'it', loading,
 }) {
   const [sheetState, setSheetState] = useState('collapsed') // collapsed|mid|expanded
@@ -68,7 +68,7 @@ export default function BottomSheet({
 
       {/* Time control */}
       {sheetState !== 'collapsed' && (
-        <TimeControl lang={lang} selectedTime={null} onChange={onTimeChange} />
+        <TimeControl lang={lang} selectedTime={selectedTime} onChange={onTimeChange} />
       )}
     </div>
   )

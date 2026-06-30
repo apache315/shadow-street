@@ -1,0 +1,13 @@
+/* maplibre-gl CSS is imported in main.jsx */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  color: var(--text-primary);
+  background: var(--bg);
+  height: 100dvh;
+  overflow: hidden;
+}
+
+#root { height: 100dvh; position: relative; }

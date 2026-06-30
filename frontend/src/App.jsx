@@ -1,3 +1,12 @@
+import { useRef, useState } from 'react'
+import Map from './components/Map.jsx'
+
 export default function App() {
-  return <div style={{ fontFamily: 'Inter, sans-serif' }}>Shadow Street — loading…</div>
+  const [mapReady, setMapReady] = useState(false)
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100dvh' }}>
+      <Map onMapReady={() => setMapReady(true)} />
+    </div>
+  )
 }

@@ -1,0 +1,16 @@
+:root {
+  --route-fast: #FF8C00;
+  --route-shade: #1565C0;
+  --shade-overlay: #B3C8F0;
+  --text-primary: #1A1A1A;
+  --text-secondary: #757575;
+  --bg: #FFFFFF;
+  --green-badge: #2E7D32;
+  --surface: #F5F5F5;
+  --border: #E0E0E0;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.12);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
+  --radius-sm: 8px;
+  --radius-pill: 24px;
+  --font: 'Inter', sans-serif;
+}

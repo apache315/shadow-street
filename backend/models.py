@@ -26,4 +26,4 @@ class RouteResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     status: str
-    cache_age_minutes: Optional[int] = None
+    cache_age_minutes: Optional[int]

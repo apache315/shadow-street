@@ -4,15 +4,16 @@ from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
-from models import HealthResponse
+from models import HealthResponse, RouteRequest, RouteResponse, RouteInfo
 from osm_loader import load_walk_graph, load_buildings, load_trees, get_covered_edges
 from shadow_engine import compute_shadow_weights
-from cache import save_shadow_weights
+from cache import save_shadow_weights, load_shadow_weights
+from router import find_routes
 
 _cache_age_minutes: Optional[int] = None
 _G = None
@@ -60,3 +61,20 @@ app.add_middleware(
 @app.get("/health", response_model=HealthResponse)
 def health():
     return HealthResponse(status="ok", cache_age_minutes=_cache_age_minutes)
+
+
+@app.post("/route", response_model=RouteResponse)
+async def route(req: RouteRequest):
+    dt = req.datetime or datetime.now(timezone.utc)
+    weights = load_shadow_weights(dt)
+    if weights is None:
+        weights = {}
+    try:
+        fastest_info, shadiest_info, night = find_routes(_G, req.start, req.end, weights)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    return RouteResponse(
+        fastest=RouteInfo(**fastest_info),
+        shadiest=RouteInfo(**shadiest_info),
+        night=night,
+    )

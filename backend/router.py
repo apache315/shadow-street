@@ -45,7 +45,12 @@ def _weight_shadiest(
     shadow_weights: Dict[str, float],
     alpha: float,
 ) -> float:
-    dist = data.get("length", 1.0)
+    # For a MultiDiGraph, networkx passes the *entire* multi-edge dict
+    # ({0: {...}, 1: {...}}) to a callable weight, not a single edge's
+    # attribute dict. Resolve to the min-length parallel edge first,
+    # mirroring _annotate_route's pattern exactly.
+    best = min(data.values(), key=lambda d: d.get("length", float("inf")))
+    dist = best.get("length", 1.0)
     shade = shadow_weights.get(_edge_key(u, v), 0.0)
     sun_exposed = dist * (1 - shade)
     return dist + alpha * sun_exposed
@@ -114,6 +119,7 @@ def find_routes(
     end: Tuple[float, float],
     shadow_weights: Dict[str, float],
     alpha: float = 2.0,
+    night: bool = False,
 ) -> Tuple[dict, dict, bool]:
     """Compute fastest and shadiest walking routes on graph G.
 
@@ -130,14 +136,18 @@ def find_routes(
         Mapping from edge key ``"{u}_{v}"`` to shade fraction in [0, 1].
     alpha:
         Penalty multiplier for sun-exposed distance (default 2.0).
+    night:
+        Whether it is currently night at the requested time, as determined
+        by the caller (default ``False``). Passed through unchanged into
+        the returned tuple.
 
     Returns
     -------
     tuple
         ``(fastest_info, shadiest_info, night_flag)`` where each info dict
         has keys ``geojson``, ``total_distance_m``, ``total_duration_s``,
-        and ``shade_pct``.  ``night_flag`` is always ``False`` (determined
-        upstream by the shadow engine).
+        and ``shade_pct``.  ``night_flag`` is the ``night`` parameter,
+        passed through from the caller.
     """
     start_lat, start_lng = start
     end_lat, end_lng = end
@@ -165,4 +175,4 @@ def find_routes(
     ):
         shadiest_info = fastest_info.copy()
 
-    return fastest_info, shadiest_info, False
+    return fastest_info, shadiest_info, night

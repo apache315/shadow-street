@@ -9,13 +9,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+from pysolar.solar import get_altitude
+
 from models import HealthResponse, RouteRequest, RouteResponse, RouteInfo
 from osm_loader import load_walk_graph, load_buildings, load_trees, get_covered_edges
-from shadow_engine import compute_shadow_weights
+from shadow_engine import compute_shadow_weights, PISA_LAT, PISA_LON
 from cache import save_shadow_weights, load_shadow_weights
 from router import find_routes
 
-_cache_age_minutes: Optional[int] = None
+_cache_refreshed_at: Optional[datetime] = None
 _G = None
 _buildings = None
 _trees = None
@@ -24,11 +26,11 @@ scheduler = AsyncIOScheduler()
 
 
 async def refresh_shadow_cache() -> None:
-    global _cache_age_minutes
+    global _cache_refreshed_at
     now = datetime.now(timezone.utc)
     weights, _ = compute_shadow_weights(now, _G, _buildings, _trees, _covered_edges)
     save_shadow_weights(weights, now)
-    _cache_age_minutes = 0
+    _cache_refreshed_at = now
 
 
 @asynccontextmanager
@@ -60,7 +62,12 @@ app.add_middleware(
 
 @app.get("/health", response_model=HealthResponse)
 def health():
-    return HealthResponse(status="ok", cache_age_minutes=_cache_age_minutes)
+    cache_age = (
+        int((datetime.now(timezone.utc) - _cache_refreshed_at).total_seconds() // 60)
+        if _cache_refreshed_at
+        else None
+    )
+    return HealthResponse(status="ok", cache_age_minutes=cache_age)
 
 
 @app.post("/route", response_model=RouteResponse)
@@ -68,9 +75,17 @@ async def route(req: RouteRequest):
     dt = req.datetime or datetime.now(timezone.utc)
     weights = load_shadow_weights(dt)
     if weights is None:
-        weights = {}
+        raise HTTPException(
+            status_code=503,
+            detail="Shadow data not yet available for this time slot — try again shortly",
+        )
+    dt_aware = dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    sun_alt = get_altitude(PISA_LAT, PISA_LON, dt_aware)
+    night = sun_alt <= 0
     try:
-        fastest_info, shadiest_info, night = find_routes(_G, req.start, req.end, weights)
+        fastest_info, shadiest_info, night = find_routes(
+            _G, req.start, req.end, weights, night=night
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return RouteResponse(

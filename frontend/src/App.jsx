@@ -78,6 +78,15 @@ export default function App() {
             boxShadow: 'var(--shadow-sm)', fontSize: 13, zIndex: 10,
           }}>Calcolo percorsi…</div>
         )}
+
+        {!loading && error && (
+          <div style={{
+            position: 'absolute', top: 70, left: '50%', transform: 'translateX(-50%)',
+            background: '#fff', borderRadius: 20, padding: '6px 16px',
+            boxShadow: 'var(--shadow-sm)', fontSize: 13, zIndex: 10,
+            color: '#c0392b',
+          }}>{lang === 'it' ? 'Errore di rete, riprova' : 'Network error, please retry'}</div>
+        )}
       </div>
 
       {!isDesktop && (

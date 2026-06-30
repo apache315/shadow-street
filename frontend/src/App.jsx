@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import Map from './components/Map.jsx'
 import SearchBar from './components/SearchBar.jsx'
 import RouteLayer from './components/RouteLayer.jsx'
+import BottomSheet from './components/BottomSheet.jsx'
 import { useGeolocation } from './hooks/useGeolocation.js'
 import { useRoutes } from './hooks/useRoutes.js'
 
@@ -61,6 +62,17 @@ export default function App() {
           boxShadow: 'var(--shadow-sm)', fontSize: 13, zIndex: 10,
         }}>Calcolo percorsi…</div>
       )}
+
+      <BottomSheet
+        fastest={fastest}
+        shadiest={shadiest}
+        night={night}
+        activeRoute={activeRoute}
+        onSelectRoute={setActiveRoute}
+        onTimeChange={setSelectedTime}
+        lang={lang}
+        loading={loading}
+      />
     </div>
   )
 }
